@@ -39,7 +39,15 @@ function texty_file($dir, $id) {
 	return $dir . "/" . $id . ".txt";
 }
 
-function texty_update($dir) {
+$texty_updated_done = FALSE;
+function texty_update($admin, $dir) {
+	// Protect againt non-admins and multiple updates.
+	global $texty_updated_done;
+	if ($texty_updated_done || !$admin) {
+		return;
+	}
+
+	$texty_updated_done = TRUE;
 	$action = $_POST["action"];
 	if ($action !== "texty_update_text") {return;}
 	
@@ -71,7 +79,7 @@ function texty_url_email($txt_content, $target="_blank") {
 
 
 function texty($admin, $dir, $id, $cols, $rows) {
-	texty_update($dir);
+	texty_update($admin, $dir);
 	
 	$file = texty_file($dir, $id);
 	$content = file_get_contents($file);
